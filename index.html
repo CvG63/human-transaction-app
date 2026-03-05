@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Human Transaction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Jost:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300&display=swap" rel="stylesheet">
+<style>
+/* ─── DESIGN LANGUAGE ──────────────────────────────────────
+   Aesthetic: worn manuscript meets meditation space.
+   Light parchment ground. Deep ink headings. One ember accent.
+   Typography carries the weight. Stillness is intentional.
+──────────────────────────────────────────────────────────── */
+:root {
+  --parchment: #f7f3ec;
+  --cream:     #efe9dd;
+  --warm-white:#fdfaf5;
+  --ink:       #1a1612;
+  --ink-soft:  #3a342c;
+  --ink-muted: #7a7068;
+  --ink-faint: #b8b0a4;
+  --ember:     #a63d1f;
+  --ember-dim: rgba(166,61,31,0.12);
+  --gold:      #8a6f2e;
+  --border:    rgba(26,22,18,0.1);
+  --border-strong: rgba(26,22,18,0.18);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--parchment);
+  color:var(--ink-soft);
+  font-family:'Jost',system-ui,sans-serif;
+  font-weight:300;
+  font-size:16px;
+  line-height:1.75;
+  overflow-x:hidden;
+}
+
+/* ─── PROGRESS BAR ────────────────────────────────────── */
+#progress-bar{
+  position:fixed;top:0;left:0;z-index:500;
+  height:3px;width:0%;
+  background:linear-gradient(90deg, var(--ember), var(--gold));
+  transition:width 0.1s linear;
+  pointer-events:none;
+}
+
+/* ─── VIEWS ───────────────────────────────────────────── */
+.view{display:none}
+.view.active{display:block}
+
+/* ─── NAV ─────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:50px;
+  background:rgba(247,243,236,0.96);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2.5rem;
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1rem;font-weight:400;letter-spacing:0.05em;
+  color:var(--ink);cursor:pointer;
+}
+.nav-logo em{color:var(--ember);font-style:italic}
+.nav-back{
+  font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--ink-muted);cursor:pointer;background:none;border:none;
+  font-family:'Jost',sans-serif;font-weight:400;padding:0;
+  transition:color 0.2s;display:none;
+}
+.nav-back.on{display:block}
+.nav-back:hover{color:var(--ember)}
+
+/* ─── HOMEPAGE ────────────────────────────────────────── */
+#home-view{min-height:100vh}
+
+.opening{
+  padding:6rem 2.5rem 3.5rem;
+  max-width:1200px;margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  align-items:end;
+}
+@media(max-width:760px){
+  .opening{grid-template-columns:1fr;gap:2rem;padding:5rem 1.5rem 2.5rem}
+}
+
+.site-kicker{
+  font-size:0.68rem;letter-spacing:0.32em;text-transform:uppercase;
+  color:var(--ember);margin-bottom:1.25rem;font-weight:400;
+  animation:fadeUp 0.8s ease both;
+}
+
+.site-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(3rem,6vw,5.2rem);
+  font-weight:300;line-height:1.0;
+  color:var(--ink);
+  margin-bottom:1.75rem;
+  animation:fadeUp 0.8s 0.08s ease both;
+}
+.site-title strong{font-weight:600}
+.site-title em{color:var(--ember);font-style:italic}
+
+.opening-text{
+  font-size:1.05rem;line-height:1.85;
+  color:var(--ink-muted);
+  max-width:480px;
+  animation:fadeUp 0.8s 0.16s ease both;
+}
+.opening-text p+p{margin-top:1rem}
+.opening-text strong{color:var(--ink-soft);font-weight:500}
+
+.opening-right{
+  animation:fadeUp 0.8s 0.22s ease both;
+}
+
+.bodhi-block{
+  border-left:2px solid var(--ember);
+  padding:1.5rem 1.75rem;
+  background:rgba(166,61,31,0.04);
+}
+.bodhi-kicker{
+  font-size:0.65rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--ember);margin-bottom:0.75rem;font-weight:400;
+}
+.bodhi-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;font-weight:300;
+  font-style:italic;line-height:1.6;
+  color:var(--ink);
+}
+.bodhi-sub{
+  margin-top:1rem;
+  font-size:0.88rem;line-height:1.7;
+  color:var(--ink-muted);
+}
+
+.entry-bar{
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:0.9rem 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;flex-wrap:wrap;
+  background:var(--cream);
+}
+.entry-label{
+  font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--ink-muted);font-weight:400;
+}
+.entry-instruction{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-size:1rem;
+  color:var(--ink-soft);
+}
+
+/* ─── TILE GRID ───────────────────────────────────────── */
+.tiles-wrap{
+  max-width:1200px;margin:0 auto;
+}
+
+.part-row{
+  border-bottom:1px solid var(--border);
+}
+
+.part-label-row{
+  display:grid;
+  grid-template-columns:180px 1fr;
+  border-bottom:1px solid var(--border);
+  align-items:stretch;
+}
+@media(max-width:760px){
+  .part-label-row{grid-template-columns:1fr}
+}
+
+.part-label-cell{
+  padding:1.5rem 2rem;
+  background:var(--cream);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.part-number{
+  font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--ember);margin-bottom:0.3rem;font-weight:400;
+}
+.part-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;font-weight:600;line-height:1.25;
+  color:var(--ink);
+}
+.part-meta{
+  font-size:0.78rem;color:var(--ink-faint);
+  margin-top:0.4rem;line-height:1.4;
+}
+
+.part-tiles{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+}
+
+.tile{
+  padding:1.5rem 1.75rem 1.75rem;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:background 0.22s;
+  background:var(--warm-white);
+  outline:none;
+}
+.tile:hover,.tile:focus{background:var(--cream)}
+.tile:focus-visible{box-shadow:inset 0 0 0 2px var(--ember);}
+.tile::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--ember);
+  transform:scaleY(0);transform-origin:bottom;
+  transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.tile:hover::before,.tile:focus::before{transform:scaleY(1)}
+
+/* Read state */
+.tile.read-tile{
+  background:var(--parchment);
+}
+.tile.read-tile .tile-title{
+  color:var(--ink-muted);
+}
+.tile.read-tile::after{
+  content:'✓';
+  position:absolute;top:0.75rem;right:1rem;
+  font-size:0.65rem;color:var(--ember);
+  opacity:0.5;letter-spacing:0.05em;
+}
+
+.tile-ch{
+  font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:0.5rem;font-weight:400;
+}
+.tile-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;font-weight:600;line-height:1.2;
+  color:var(--ink);margin-bottom:0.25rem;
+}
+.tile-sub{
+  font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--ember);margin-bottom:0.6rem;font-weight:400;
+}
+.tile-hook{
+  font-size:0.85rem;line-height:1.6;
+  color:var(--ink-muted);
+}
+.tile-go{
+  position:absolute;bottom:1.25rem;right:1.25rem;
+  font-size:0.9rem;color:var(--ember);
+  opacity:0;transform:translateX(-4px);
+  transition:opacity 0.2s,transform 0.22s;
+  font-family:'Cormorant Garamond',serif;
+}
+.tile:hover .tile-go,.tile:focus .tile-go{opacity:1;transform:translateX(0)}
+
+/* ─── CHAPTER VIEW ────────────────────────────────────── */
+#chapter-view{background:var(--parchment);padding-top:50px}
+
+.ch-banner{
+  background:var(--ink);
+  padding:4rem 2.5rem 3.5rem;
+  position:relative;overflow:hidden;
+}
+.ch-banner::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 0% 100%,rgba(166,61,31,0.18) 0%,transparent 55%);
+}
+
+.ch-inner{max-width:760px;margin:0 auto;position:relative;z-index:2}
+
+.ch-breadcrumb{
+  font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:rgba(247,243,236,0.35);margin-bottom:2rem;
+}
+.ch-part-tag{
+  font-size:0.65rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--ember);margin-bottom:0.5rem;
+}
+.ch-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,5vw,3.8rem);
+  font-weight:300;line-height:1.05;
+  color:var(--parchment);margin-bottom:0.25rem;
+}
+.ch-subtitle{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-size:1.25rem;
+  color:rgba(166,61,31,0.85);margin-bottom:2.5rem;
+}
+.ch-principle{
+  border-left:2px solid rgba(166,61,31,0.6);
+  padding:1rem 1.5rem;
+  background:rgba(247,243,236,0.06);
+}
+.ch-principle-label{
+  font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:rgba(166,61,31,0.7);margin-bottom:0.4rem;
+}
+.ch-principle p{
+  font-size:0.95rem;line-height:1.75;
+  color:rgba(247,243,236,0.8);
+}
+
+.ch-body{
+  max-width:760px;margin:0 auto;
+  padding:4rem 2.5rem 5rem;
+}
+@media(max-width:760px){.ch-body{padding:2.5rem 1.5rem 4rem}}
+
+.ch-body h3{
+  font-size:0.65rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--ember);
+  margin:3.5rem 0 1.25rem;
+  padding-bottom:0.5rem;
+  border-bottom:1px solid rgba(166,61,31,0.15);
+  font-weight:400;
+}
+
+.ch-body p{
+  font-size:1rem;line-height:1.9;
+  color:var(--ink-soft);
+  margin-bottom:1.25rem;
+}
+.ch-body p strong{color:var(--ink);font-weight:500}
+.ch-body p em{color:var(--gold);font-style:italic}
+
+.pull{
+  margin:2.75rem 0;
+  padding:1.75rem 2rem;
+  background:var(--cream);
+  border-top:1px solid var(--border-strong);
+  border-bottom:1px solid var(--border-strong);
+  text-align:center;
+}
+.pull p{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.35rem!important;
+  font-style:italic;font-weight:300;
+  color:var(--ink)!important;
+  line-height:1.5;margin:0!important;
+}
+.pull-attr{
+  font-size:0.72rem!important;
+  color:var(--ink-muted)!important;
+  margin-top:0.6rem!important;
+  font-style:normal!important;
+  letter-spacing:0.05em;
+}
+
+.warmth{
+  margin:2rem 0;
+  padding:1.5rem 2rem;
+  border-left:3px solid var(--gold);
+  background:rgba(138,111,46,0.05);
+}
+.warmth p{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem!important;font-style:italic;
+  color:var(--ink-soft)!important;
+  line-height:1.75;margin:0!important;
+}
+
+.command{
+  margin:2rem 0;
+  padding:1.5rem 2rem;
+  background:var(--ink);
+  border-left:3px solid var(--ember);
+}
+.command p{
+  font-size:0.97rem!important;
+  color:rgba(247,243,236,0.9)!important;
+  margin:0!important;line-height:1.8!important;
+}
+.command p strong{color:var(--parchment)!important;font-weight:500!important}
+.command p em{color:rgba(166,61,31,0.9)!important;font-style:italic!important}
+
+.xref-wrap{
+  margin-top:4rem;
+  padding-top:2rem;
+  border-top:1px solid var(--border);
+}
+.xref-wrap h3{margin-top:0!important}
+.xref-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  margin-top:1rem;
+}
+.xref-card{
+  background:var(--warm-white);
+  padding:1rem 1.25rem;
+  cursor:pointer;transition:background 0.18s;
+  outline:none;
+}
+.xref-card:hover,.xref-card:focus{background:var(--cream)}
+.xref-card:focus-visible{box-shadow:inset 0 0 0 2px var(--ember);}
+.xref-card .xn{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.2rem}
+.xref-card .xt{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--ink)}
+.xref-card .xs{font-size:0.78rem;color:var(--ink-muted);margin-top:0.15rem;line-height:1.35}
+
+.sources-wrap{
+  margin-top:2rem;
+  padding:1.5rem 2rem;
+  background:var(--cream);
+  border-top:2px solid var(--border);
+}
+.sources-wrap h3{margin-top:0!important}
+.sources-list{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem}
+.source-pill{
+  font-size:0.75rem;
+  border:1px solid var(--border-strong);
+  color:var(--ink-muted);
+  padding:0.25rem 0.7rem;
+  background:var(--warm-white);
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+</style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS BAR -->
+<div id="progress-bar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" id="nav-logo">The <em>Human</em> Transaction</div>
+  <button class="nav-back" id="nb">← All Chapters</button>
+</nav>
+
+<!-- HOME VIEW -->
+<div id="home-view" class="view active">
+  <div class="opening">
+    <div class="opening-left">
+      <div class="site-kicker">A Hero's Journey in 18 Chapters</div>
+      <h1 class="site-title">
+        The<br>
+        <strong>Human</strong><br>
+        <em>Transaction</em>
+      </h1>
+      <div class="opening-text">
+        <p>There is a moment in the Buddhist tradition that rarely gets told properly. Siddhartha, sitting beneath the Bodhi tree, was visited by Mara — the force of everything that distracts, deceives, and delays. Temptation. Fear. Doubt. The seductive comfort of the familiar.</p>
+        <p>He did not fight. He did not argue. He reached down and touched the earth — and simply said: <strong>I have the right to be here.</strong></p>
+        <p>That is the whole of it. Not a battle. A recognition. The work of a conscious life is not to defeat what holds you back. It is to see it clearly — and to know, with the same quiet certainty, that the seat is yours.</p>
+      </div>
+    </div>
+    <div class="opening-right">
+      <div class="bodhi-block">
+        <div class="bodhi-kicker">On the nature of this journey</div>
+        <div class="bodhi-text">"The privilege of a lifetime is being who you are. The cave you fear to enter holds the treasure you seek."</div>
+        <div class="bodhi-sub">Joseph Campbell — The Hero With a Thousand Faces<br><br>
+        Every life contains a hero's journey. The call comes quietly — a growing sense that the inherited shape of things no longer quite fits. These eighteen chapters map the arc from that first recognition, through the necessary descent, through grace and rebirth, and into a life built by conscious choice.<br><br>
+        Start anywhere. Everything connects.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry-bar">
+    <span class="entry-label">18 Chapters — Five Stages of the Journey</span>
+    <span class="entry-instruction">Each chapter leads to the others. Begin where something already stirs.</span>
+  </div>
+
+  <div class="tiles-wrap" id="tiles-wrap"></div>
+</div>
+
+<!-- CHAPTER VIEW -->
+<div id="chapter-view" class="view">
+  <div id="chapter-content"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   DATA — 5 Parts following Campbell's Hero's Journey
+   18 chapters. Voice: compassionate, structural,
+   affirmative. Blame the map. Never the traveller.
+═══════════════════════════════════════════════════════ */
+
+const PARTS = [
+  {id:1, name:"The Inherited Map",       arc:"The Call",            note:"The beliefs and scripts that arrived before conscious choice was possible."},
+  {id:2, name:"The Armor and the Echo",  arc:"The Threshold",       note:"How intelligence adapted — and why the old protection now asks a new question."},
+  {id:3, name:"The Descent and the Grace",arc:"Belly of the Whale", note:"Grieving the lost years. Radical self-forgiveness. The mechanics of rebirth."},
+  {id:4, name:"The Conscious Architecture",arc:"Road of Trials",    note:"Building a life from chosen values, clear systems, and regulated presence."},
+  {id:5, name:"The Open Horizon",        arc:"The Return",          note:"Meaning, mastery, and the ongoing privilege of becoming."}
+];
+
+const CH = [
+
+/* ── PART ONE: THE INHERITED MAP ── */
+{
+  id:1, part:1,
+  title:"The Arrangement",
+  sub:"What Was Decided Before You Could Decide",
+  hook:"Long before conscious choice enters the picture, a great deal has already been arranged — beliefs about what is possible, what is safe, what a person in this family, this culture, this body, deserves.",
+  core:"The beliefs that feel most like unquestionable facts are often the ones that arrived earliest, before there was the capacity to examine them. Recognising them as inherited rather than as truth is the first and most important act of genuine freedom.",
+  xrefs:[2,3,9,12],
+  refs:["Joseph Campbell — The Hero With a Thousand Faces","Carl Jung — The Undiscovered Self","M. Scott Peck — The Road Less Travelled","Richard Schwartz — No Bad Parts (IFS)","Viktor Frankl — Man's Search for Meaning"],
+  secs:[
+    {
+      h:"The Arrangement",
+      blocks:[
+        {t:"p",c:"There is a story about a circus elephant, tethered as a calf to a stake in the ground. It pulls. It struggles. It cannot move the stake. Eventually — it stops trying. Years later, the same animal could uproot that stake without effort. It no longer knows this. The tether was never physical. It was a conclusion drawn in a moment of helplessness, and quietly maintained ever since."},
+        {t:"p",c:"This is not a story about limitation. It is a story about the extraordinary intelligence of adaptation. Every living thing learns the rules of the environment it is born into. The learning was accurate. The environment was real. The question that becomes available later — and it is one of the most important questions a person can sit with — is whether the conditions that made that adaptation necessary still exist."},
+        {t:"pull",c:'"The privilege of a lifetime is being who you are."',attr:"Joseph Campbell — The Hero With a Thousand Faces"},
+        {t:"p",c:"Jung called this lifelong process individuation — the patient work of separating what is genuinely one's own from what was absorbed from the surrounding world. Campbell framed it as the hero's first threshold: not a physical departure but an internal one. The moment of recognising that the inherited map of the world is a map — not the territory itself."}
+      ]
+    },
+    {
+      h:"The Voices in the Architecture",
+      blocks:[
+        {t:"warmth",c:"The beliefs that arrived early came from people doing the best they could with what they had — often people who cared deeply, who were themselves shaped by what they had inherited. There is no assignment of fault here. There is only the observation that what feels most like an unquestionable truth about what is possible — the things that go without saying, the limits that don't require examination — often carries the fingerprints of another time, another room, another set of conditions entirely."},
+        {t:"p",c:"Viktor Frankl, writing from inside the most extreme conditions imaginable, identified something permanent: the space between any stimulus and any response belongs to the one experiencing it. That space is where genuine choice lives. The work of this journey is not to manufacture new choices from nowhere. It is to locate that space — often buried under decades of automatic response — and learn to inhabit it."},
+        {t:"command",c:"<strong>One practice worth beginning:</strong> take a single belief that operates as a settled fact about what is possible — not a philosophical opinion, but an operational conviction about the limits of your own situation. Trace it. Not to assign blame, but to locate its origin. Most of the time, that origin is a specific moment, a specific environment, a specific authority whose word was law then. <strong>The question worth sitting with is simply whether that authority still holds — or whether it is being maintained out of long habit and the quiet loyalty that habit generates.</strong>"}
+      ]
+    },
+    {
+      h:"The First Call",
+      blocks:[
+        {t:"p",c:"Campbell's observation about the hero's journey is not mythology for its own sake. It describes something that happens in actual lives. The ordinary world becomes too small. Usually quietly. A creeping sense that the shape of the life no longer fits what is trying to live inside it. The roles feel slightly borrowed. The goals feel slightly inherited. The self that shows up to daily events carries something that doesn't quite belong to it."},
+        {t:"p",c:"<strong>The first threshold is the recognition that the inherited map is not the territory — and that a different journey is possible.</strong> Not required. Possible. The invitation is always being extended. Most people sense it and set it aside, not from cowardice, but because the ordinary world, however ill-fitting, is at least fully known. Peck's formulation is direct: the road less travelled is less travelled precisely because it requires something. And it leads somewhere the other roads do not."}
+      ]
+    }
+  ]
+},
+
+{
+  id:2, part:1,
+  title:"The Mirror",
+  sub:"The Evidence Beneath the Story",
+  hook:"The gap between the story told about oneself and the evidence of how one actually lives — what is chosen, what is avoided, what recurs — is where the most important information waits.",
+  core:"Awareness of pattern is not self-criticism. It is the precise, compassionate observation of what is consistently done, avoided, justified, and repeated. The pattern always carries more information than the explanation given for it.",
+  xrefs:[1,3,7,10],
+  refs:["M. Scott Peck — The Road Less Travelled","Carl Jung — Memories, Dreams, Reflections","Brené Brown — The Gifts of Imperfection","Richard Schwartz — No Bad Parts","Viktor Frankl — Man's Search for Meaning"],
+  secs:[
+    {
+      h:"The Evidence and the Story",
+      blocks:[
+        {t:"p",c:"M. Scott Peck opens <em>The Road Less Travelled</em> with three words: Life is difficult. Not as pessimism. As structural relief. The moment that fact is genuinely accepted — not as complaint but as clear-eyed recognition — the question shifts from <em>why is this so hard</em> to <em>what is the most honest, useful response to something that is simply, inherently hard.</em> That shift changes everything downstream."},
+        {t:"p",c:"The mirror this chapter refers to is not the flattering kind and not the punishing kind either. It is the precise kind — the one that shows the distance between stated values and the evidence of actual daily choices. The calendar. The pattern of which conversations get quietly avoided. The recurring situations that keep appearing in slightly different costumes, with slightly different people, producing the same feeling in the end."},
+        {t:"pull",c:'"Until you make the unconscious conscious, it will direct your life and you will call it fate."',attr:"Carl Jung"}
+      ]
+    },
+    {
+      h:"The Shadow",
+      blocks:[
+        {t:"warmth",c:"Jung's concept of the Shadow is frequently misread as something dark or shameful. It is more precise than that. The Shadow is simply the unseen — the aspects of personality, capability, and longing that never made it into the official story. Sometimes because they were inconvenient. Sometimes because the environment never made room for them. The Shadow is not the worst of a person. It is the unexplored territory. And unexplored territory does not disappear because it goes unacknowledged. It finds its own expression, usually at the least convenient moments."},
+        {t:"p",c:"Brené Brown's research into shame and vulnerability offers a related frame: the parts that feel most unacceptable are often simply the parts that were most punished — not the parts that are most true. The work of looking honestly is not a confrontation with the self. It is the beginning of a more accurate acquaintance with it."},
+        {t:"command",c:"<strong>The honest inventory is not a comfortable exercise. It is a generative one.</strong> Looking at the past three months — not the intentions but the actual record of how time and energy were spent — where is the gap between what genuinely matters and what actually received the investment? What has been quietly tolerated so long it now passes for normal? <strong>Writing the answers makes them specific. Specificity makes them workable. Generalities can be defended indefinitely. Specifics become the beginning of something different.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:3, part:1,
+  title:"The Persona",
+  sub:"The Mask, the Face, and the Author",
+  hook:"Every social role requires a performance. The performance is not dishonesty — it is competence. The question worth asking is whether the mask is being worn deliberately, or whether it has become the only face available.",
+  core:"The persona — the face presented to the world — is a necessary and intelligent tool. It becomes a constraint precisely when it migrates from tool to identity, when the performance no longer has an author who can choose to step back.",
+  xrefs:[1,2,10,11],
+  refs:["Carl Jung — The Archetypes and the Collective Unconscious","Brené Brown — Daring Greatly","M. Scott Peck — The Road Less Travelled","Richard Schwartz — No Bad Parts","Tony Robbins — Unlimited Power"],
+  secs:[
+    {
+      h:"Performance as Competence",
+      blocks:[
+        {t:"p",c:"Jung named the social face the <em>persona</em> — from the Latin word for the masks worn by actors in ancient theatre. He was explicit: the persona is functional, not pathological. A complex inner life cannot be fully present in every context. The persona is how a person navigates between contexts while maintaining coherence."},
+        {t:"p",c:"Every surgeon performs. Every parent, when a child is frightened and they are also frightened, performs the steadier version of themselves that the moment requires. Every leader, on the mornings when confidence is most absent, offers the confidence the team needs to see. This is not deception. It is the recognition that the role asks something, and the professional response is to provide it regardless of the internal weather."},
+        {t:"pull",c:'"Vulnerability is not winning or losing; it\'s having the courage to show up and be seen when we have no control over the outcome."',attr:"Brené Brown — Daring Greatly"},
+        {t:"p",c:"Aristotle's insight precedes the psychology by two thousand years: character is built through the accumulated weight of repeated action. The mask worn consistently, with genuine commitment, begins to shape the person wearing it. <strong>This is the mechanism that makes deliberate performance not just acceptable but genuinely transformative — as long as the author remains present behind it.</strong>"}
+      ]
+    },
+    {
+      h:"When the Mask Loses Its Author",
+      blocks:[
+        {t:"warmth",c:"The mask was assembled for real reasons. In many cases it kept things safe — kept relationships intact, kept a job or a family or a sense of self functioning through circumstances that could not accommodate more honesty at the time. None of that was wrong. The question that arises later — often quietly, often in the form of a persistent flatness rather than a dramatic crisis — is whether those original conditions still exist, or whether the armour has simply become the wardrobe."},
+        {t:"p",c:"Brown's research is precise here: when vulnerability is consistently unavailable — when the performance of competence or composure never has a moment to put itself down — the cost accrues invisibly. Connection becomes difficult because the managed version is what arrives at every interaction. Support cannot reach a person who presents as not needing it."},
+        {t:"command",c:"<strong>The useful question is not whether a mask is being worn — it is whether there is a space, a person, a moment where the performance is not required.</strong> If every context demands the fully managed version and nowhere is the unmanaged version permitted to breathe — the mask is no longer a tool. It is a container. <strong>The work is to reclaim authorship: to wear the persona by deliberate choice, knowing it is a choice, rather than to have forgotten that a choice exists at all.</strong>"}
+      ]
+    }
+  ]
+},
+
+/* ── PART TWO: THE ARMOR AND THE ECHO ── */
+{
+  id:4, part:2,
+  title:"The Protectors",
+  sub:"Why Every Obstacle Means Well",
+  hook:"The patterns that seem most like obstacles — the avoidance, the deflection, the familiar loops — are often the most sophisticated protective intelligence in the system. They built themselves for excellent reasons.",
+  core:"Internal Family Systems (IFS) offers a reframe that changes the entire relationship with inner resistance: there are no bad parts. Every protective pattern was assembled in response to real conditions. The question is never whether the protection was reasonable. It is whether those conditions still require the same armour today.",
+  xrefs:[1,3,5,11],
+  refs:["Richard Schwartz — No Bad Parts","Richard Schwartz — Internal Family Systems Therapy","Bessel van der Kolk — The Body Keeps the Score","Peter Levine — Waking the Tiger","Brené Brown — Rising Strong"],
+  secs:[
+    {
+      h:"No Bad Parts",
+      blocks:[
+        {t:"p",c:"Richard Schwartz spent decades working with people whose internal experience felt fractured — not one coherent self, but a chorus of competing voices, impulses, fears, and desires that seemed to work against each other. What he found was not disorder. What he found was intelligence. Each of those voices — the one that procrastinates, the one that people-pleases, the one that numbs — had originally been assembled to solve a specific problem, in a specific environment, with the resources available at the time."},
+        {t:"p",c:"He called them <em>parts</em>. And the central revelation of IFS is this: every part means well. The avoidant part isn't sabotaging. It is protecting against an exposure that once felt unsurvivable. The numbing part isn't weak. It is managing an overwhelm that once had no other exit. The inner critic isn't hostile. It is preempting external judgment before it can land. <strong>The protection was real. The question is only whether the environment that required it still exists.</strong>"},
+        {t:"pull",c:'"The curious paradox is that when I accept myself just as I am, then I can change."',attr:"Carl Rogers — On Becoming a Person"}
+      ]
+    },
+    {
+      h:"Outdated Maps",
+      blocks:[
+        {t:"warmth",c:"Van der Kolk's research into trauma and the body offers something important here: the nervous system does not distinguish between then and now by itself. A pattern that was assembled in response to a childhood environment will activate in a boardroom, in a relationship, in a quiet Tuesday afternoon, with exactly the same urgency it had when the original threat was real. The body doesn't know the threat has passed. It is still running the best protection it ever learned."},
+        {t:"p",c:"Peter Levine adds the somatic dimension: the completion of the protective response — the discharge, the full expression of what the body mobilised for — is what the nervous system is actually waiting for. The loops aren't stubbornness. They are incompletions seeking resolution. The path through is not suppression. It is, in a very literal sense, completion."},
+        {t:"command",c:"<strong>The practice is curiosity, not confrontation.</strong> When a pattern activates — the familiar loop, the habitual withdrawal, the well-worn deflection — the question worth asking is not <em>why do I keep doing this</em> but <em>what is this part trying to protect?</em> What was the original threat it was built to manage? <strong>Most protective patterns, when met with genuine curiosity rather than judgment, begin to relax. They were never trying to limit a life. They were trying to preserve it.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:5, part:2,
+  title:"The Body's Memory",
+  sub:"What the Nervous System Carries",
+  hook:"The strategies that seem most irrational — the sudden freeze, the disproportionate reaction, the inability to access logic in exactly the moments it is most needed — are not failures of will. They are the nervous system executing a survival programme that once worked.",
+  core:"Bessel van der Kolk's foundational insight — that the body keeps the score — means that healing is not only a cognitive process. The nervous system holds the unresolved story. Any real change must include the body, not only the mind.",
+  xrefs:[4,6,11,13],
+  refs:["Bessel van der Kolk — The Body Keeps the Score","Peter Levine — Waking the Tiger","Stephen Porges — The Polyvagal Theory","Gabor Maté — The Myth of Normal","Peter Levine — In an Unspoken Voice"],
+  secs:[
+    {
+      h:"The Score the Body Keeps",
+      blocks:[
+        {t:"p",c:"Van der Kolk spent forty years studying what happens to people when the ordinary capacity for self-regulation is overwhelmed. His finding is simple and has changed the landscape of psychology: the body keeps the score. The experiences that could not be processed at the time they occurred — because they were too large, too sudden, or too isolating — do not disappear into the past. They are stored somatically. They live in the posture, the breath, the activation threshold, the persistent sense of low-level dread that has no obvious present cause."},
+        {t:"p",c:"This is not metaphor. The autonomic nervous system, operating below conscious awareness, holds the residue of experiences the conscious mind may not remember, minimise, or have words for. Stephen Porges' Polyvagal Theory maps the mechanism: a hierarchy of states — social engagement, fight/flight, shutdown — each with its own physiology, its own perceptual filter, its own version of what the world looks like and what is possible within it."},
+        {t:"pull",c:'"Trauma is not what happens to us, but what we hold inside in the absence of an empathetic witness."',attr:"Peter Levine — In an Unspoken Voice"}
+      ]
+    },
+    {
+      h:"Working With the System, Not Against It",
+      blocks:[
+        {t:"warmth",c:"Gabor Maté notes that most of what gets labelled as psychological dysfunction is actually a coherent biological response to incoherent conditions. The difficulty is not in the person. The difficulty is in the mismatch between nervous system state and present-moment reality. The nervous system is doing its job with extraordinary fidelity. It is simply running programmes written for an earlier environment."},
+        {t:"command",c:"<strong>The implication is significant:</strong> attempting to override a dysregulated nervous system with cognitive reasoning alone is working against the architecture. The system that processes threat is older, faster, and more powerful than the part that reasons. <strong>The path is not suppression or override — it is regulation first, then cognition.</strong> Breath. Orientation. Physical grounding. The felt sense of safety in the body creates the conditions under which the reasoning mind can actually function. Everything else follows from that."}
+      ]
+    }
+  ]
+},
+
+{
+  id:6, part:2,
+  title:"The Echo",
+  sub:"How Patterns Sustain Themselves",
+  hook:"The situations that keep recurring, in different clothing, with different people, producing the same feeling — are not coincidences. They are the predictable outputs of an internal architecture that has not yet been updated.",
+  core:"Patterns persist not through weakness but through the logic of confirmation: the nervous system seeks evidence for what it already believes, finds it, and reinforces the belief. Seeing the mechanism is not the same as being trapped by it.",
+  xrefs:[2,4,5,14],
+  refs:["Carl Jung — The Structure and Dynamics of the Psyche","Richard Schwartz — No Bad Parts","Daniel Kahneman — Thinking, Fast and Slow","Acceptance and Commitment Therapy — Steven Hayes","Brené Brown — Rising Strong"],
+  secs:[
+    {
+      h:"The Repetition Compulsion",
+      blocks:[
+        {t:"p",c:"Freud named it the repetition compulsion — the tendency to recreate familiar relational dynamics, even painful ones, in new contexts. Later theorists refined the mechanism: the nervous system is not drawn to pain for its own sake. It is drawn to resolution. The incomplete experience — the story that never reached its natural conclusion — creates a pull toward similar situations, seeking the ending that never came."},
+        {t:"p",c:"Jung framed it differently but arrived at the same ground: what is not faced tends to seek expression. The content that remains unconscious does not disappear. It finds the back door — through the relationships chosen, the conflicts provoked, the circumstances somehow always assembled. <strong>The pattern is not punishment. It is the psyche's method of returning, again and again, to something that needs looking at.</strong>"},
+        {t:"pull",c:'"Everything that irritates us about others can lead us to an understanding of ourselves."',attr:"Carl Jung — Memories, Dreams, Reflections"}
+      ]
+    },
+    {
+      h:"Working with Confirmation Bias",
+      blocks:[
+        {t:"warmth",c:"Kahneman's distinction between fast and slow thinking maps this well: the fast system — the one running most of life, most of the time — is not actually perceiving the present moment. It is pattern-matching against memory. It is finding what it was built to find. The perception feels like reality. It is actually a hypothesis — the best guess of a system trained on old data, looking for confirmation in new territory."},
+        {t:"p",c:"Steven Hayes' Acceptance and Commitment Therapy (ACT) offers a specific practice: <em>defusion</em> — learning to observe a thought or belief as an event in consciousness rather than as an accurate representation of reality. <em>I notice I'm having the thought that this will fail</em> is a fundamentally different relationship to that content than <em>this will fail.</em>"},
+        {t:"command",c:"<strong>The practice available right now:</strong> take a recurring situation — one that keeps appearing with different people, different contexts, the same essential shape. Ask what belief about the self, others, or the world would need to be true for this situation to keep generating itself. Then ask: where did that belief come from? Is it a conclusion — or is it an inherited assumption that has been running as a fact? <strong>The echo does not stop because it is argued with. It stops when its source is seen clearly enough that the original signal no longer needs to be replayed.</strong>"}
+      ]
+    }
+  ]
+},
+
+/* ── PART THREE: THE DESCENT AND THE GRACE ── */
+{
+  id:7, part:3,
+  title:"The Descent",
+  sub:"When the Old Self Stops Working",
+  hook:"The period that feels most like failure — when the strategies that once worked have stopped, when the identity that once held firm has begun to loosen — is often the most important threshold on the entire journey.",
+  core:"Campbell's Belly of the Whale is not a punishment. It is the necessary dissolution of the form that has been outgrown. The grief is real. The disorientation is real. And within it, something that could not have been born any other way is beginning.",
+  xrefs:[4,5,8,9],
+  refs:["Joseph Campbell — The Hero With a Thousand Faces","Carl Jung — Modern Man in Search of a Soul","Brené Brown — Rising Strong","Richard Rohr — Falling Upward","Viktor Frankl — Man's Search for Meaning"],
+  secs:[
+    {
+      h:"The Belly of the Whale",
+      blocks:[
+        {t:"p",c:"Campbell's image of the Belly of the Whale is one of the most precise descriptions in all of mythology of something that happens in actual human lives. The hero is not killed at this threshold. They are swallowed. They pass through a membrane — out of the ordinary world, into something that is neither the old life nor the new one. It is the space between. And it is, by its nature, dark, disorienting, and stripping."},
+        {t:"p",c:"Richard Rohr calls this the <em>second half of life</em> — not a chronological age but a psychological threshold. The first half of life is necessarily about building: identity, achievement, belonging, the structures that allow function in the world. The second half begins when those structures are no longer sufficient. Not because they were wrong, but because something larger has outgrown them."},
+        {t:"pull",c:'"We must be willing to let go of the life we planned so as to have the life that is waiting for us."',attr:"Joseph Campbell"}
+      ]
+    },
+    {
+      h:"The Grief Is Not the Problem",
+      blocks:[
+        {t:"warmth",c:"The grief that accompanies real transformation is not a sign that something has gone wrong. It is the appropriate emotional response to a genuine loss — the loss of the old self, the old story, the old certainties. Brené Brown's research on rising strong is precise: the people who navigate the descent most effectively are not the ones who move through it most quickly. They are the ones who allow it to be what it actually is, without rushing to resolution."},
+        {t:"p",c:"Frankl, writing from inside the most extreme conditions imaginable, identified the paradox: meaning is not found by avoiding the descent. It is found inside it. The question that becomes available in the dark — <em>who am I underneath everything I thought I was</em> — cannot be genuinely answered in the ordinary world. The ordinary world keeps the question at bay. The descent is where it becomes unavoidable."},
+        {t:"command",c:"<strong>The invitation available here:</strong> allow the disorientation to be real without rushing to replace the old story with a new one. The nervous system's appetite for certainty is strong — it will reach for any narrative that resolves the ambiguity. <strong>The generative practice is to hold the not-yet-knowing long enough for something genuine to emerge from it, rather than simply substituting one inherited story for another that feels more spiritually correct.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:8, part:3,
+  title:"The Grace",
+  sub:"Radical Forgiveness for the Years Spent in the Wrong Story",
+  hook:"There arrives, for many people, a moment of seeing clearly — perhaps for the first time — how much of a life was spent performing a script that was never truly chosen. The feeling that follows this recognition is grief mixed with something that can only be answered by grace.",
+  core:"Grace — radical, unconditional, non-transactional self-forgiveness — is not a soft addendum to the work of transformation. It is the ground on which real change becomes possible. Without it, awareness produces only more shame. With it, the same awareness becomes liberation.",
+  xrefs:[7,9,10,15],
+  refs:["Brené Brown — The Gifts of Imperfection","Kristin Neff — Self-Compassion","Richard Schwartz — No Bad Parts","Viktor Frankl — Man's Search for Meaning","Richard Rohr — Falling Upward"],
+  secs:[
+    {
+      h:"The Weight of the Realisation",
+      blocks:[
+        {t:"p",c:"There is a particular grief that arrives when a person sees, clearly and for the first time, the shape of the life they have been living. Not the bad version of that life — often there is genuine achievement, genuine love, genuine moments of aliveness. But the shape underneath all of it. The compliance. The performance. The years spent trying to be enough according to a standard that was never genuinely chosen. The realisation carries weight."},
+        {t:"p",c:"Brené Brown's research into shame is unambiguous: shame — the belief that one is fundamentally flawed rather than simply human — is the single most corrosive force in human development. It constricts. It isolates. It makes the risk of vulnerability feel unsurvivable. And the particular shame that can accompany awakening — <em>I should have seen this sooner, I should have lived differently, I wasted so much time</em> — is one of its most insidious forms."},
+        {t:"pull",c:'"You yourself, as much as anybody in the entire universe, deserve your love and affection."',attr:"Attributed to the Buddha"}
+      ]
+    },
+    {
+      h:"The Architecture of Grace",
+      blocks:[
+        {t:"warmth",c:"Kristin Neff's work on self-compassion establishes something important: the internal voice with which most people speak to themselves about their failures would constitute emotional abuse if directed at another person. The severity of the internal critic is not a sign of high standards. It is a sign of a shame-based relationship with the self. And shame, consistently, produces not growth but contraction."},
+        {t:"p",c:"Schwartz's IFS framework offers the liberating reframe: every choice made from within the constraints of the old map was made by a self doing the best it could with the awareness and resources available at the time. The self that complied was protecting. The self that performed was managing. The self that shrunk was surviving. <strong>None of those selves need forgiveness in the punitive sense. They need acknowledgment — and the quiet, firm assurance that the armour is no longer required.</strong>"},
+        {t:"command",c:"<strong>Grace is not earned. It is extended — to oneself, unconditionally, as a prerequisite for genuine change.</strong> The practice: meet the part of yourself that carries the most shame or regret with the quality of presence you would bring to a person you love who was in pain. Not to condone, not to excuse, not to bypass — <strong>but to recognise that the person who made those choices was doing their absolute best with a map that had been given to them, in conditions they did not choose, with tools they had not yet found.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:9, part:3,
+  title:"The Rebirth",
+  sub:"The Mechanics of Becoming Something New",
+  hook:"Transformation is not a single dramatic event. It is a series of small deaths and small births — a progressive shedding of what was borrowed, and a progressive embodiment of what is genuinely one's own.",
+  core:"Rebirth after the descent is not a return to the self that existed before. It is the emergence of a self that could not have existed without the descent. The new identity is less defended, more spacious, and grounded in something more honest than the one it replaced.",
+  xrefs:[7,8,10,16],
+  refs:["Joseph Campbell — The Hero With a Thousand Faces","Carl Jung — Modern Man in Search of a Soul","Richard Rohr — Falling Upward","Acceptance and Commitment Therapy — Steven Hayes","Brené Brown — Daring Greatly"],
+  secs:[
+    {
+      h:"The Emergence",
+      blocks:[
+        {t:"p",c:"Campbell's hero does not return from the Belly of the Whale unchanged. The return is the whole point — but what returns is not the original person. Something has been shed. Something more essential has been allowed to emerge. The Japanese concept of <em>kintsugi</em> — the art of repairing broken pottery with gold — captures the essential reversal: the fracture lines are not hidden. They are honoured. The breaking is part of what makes the repaired thing more beautiful than the original."},
+        {t:"p",c:"Jung was clear that individuation — the process of becoming genuinely oneself — is not a project of self-improvement. It is a project of self-discovery. The work is not to construct a better self from scratch. It is to remove, layer by layer, what is not genuinely one's own — until what remains is simply, finally, the actual person."},
+        {t:"pull",c:'"The gold is the wound, illuminated."',attr:"after Richard Rohr — Falling Upward"}
+      ]
+    },
+    {
+      h:"Psychological Flexibility",
+      blocks:[
+        {t:"warmth",c:"Steven Hayes' Acceptance and Commitment Therapy maps the functional dimension of this emergence. Psychological flexibility — the capacity to move toward chosen values even in the presence of fear, discomfort, or uncertainty — is the characteristic that most consistently predicts both wellbeing and effective action. It is not the absence of difficult internal states. It is the expansion of the container that holds them, so that the difficult states are no longer in charge of direction."},
+        {t:"command",c:"<strong>The emerging self is recognisable by specific qualities:</strong> a decreased need to manage how others see it; a capacity to stay present with discomfort without immediately resolving or escaping it; a clearer sense of what genuinely matters versus what was inherited as mattering; a relationship with failure that is curious rather than catastrophic. <strong>These qualities are not installed through willpower. They emerge — naturally, gradually — as the old protective architecture is met with compassion and allowed to rest.</strong>"}
+      ]
+    }
+  ]
+},
+
+/* ── PART FOUR: THE CONSCIOUS ARCHITECTURE ── */
+{
+  id:10, part:4,
+  title:"The Values",
+  sub:"Building From What Is Actually True",
+  hook:"Most goal-setting begins with what seems achievable, or what others seem to value, or what a younger self decided mattered. The more generative starting point is considerably more personal — and considerably less common.",
+  core:"ACT's foundational distinction between goals and values reorients the entire project of conscious living. Goals are achieved or not. Values are directions — they can be moved toward regardless of current circumstances, and their compass function is available in every moment of every day.",
+  xrefs:[9,11,12,14],
+  refs:["Steven Hayes — A Liberated Mind","Russ Harris — The Happiness Trap","Stephen Covey — The 7 Habits of Highly Effective People","Viktor Frankl — Man's Search for Meaning","Brené Brown — Daring Greatly"],
+  secs:[
+    {
+      h:"Goals vs. Values",
+      blocks:[
+        {t:"p",c:"Steven Hayes draws a distinction that reorganises everything: a goal is a destination — achieved, not achieved, relevant for a period, then replaced. A value is a direction — always available, always operable, never completed. The goal is to be fit. The value is care for the body. The distinction matters enormously in practice. Goals generate anxiety about arrival. Values generate engagement with process. And process is where life actually lives."},
+        {t:"p",c:"Frankl's insight from <em>Man's Search for Meaning</em> deepens this: meaning is not found by achieving things. It is found in the quality of presence brought to any activity — including and especially the hardest ones. The person who can find their values operable in difficulty — who can still bring care, honesty, or courage to a situation that is failing — is structurally more resilient than the person who needs circumstances to cooperate before their values become available."},
+        {t:"pull",c:'"He who has a why to live can bear almost any how."',attr:"Viktor Frankl — Man\'s Search for Meaning"}
+      ]
+    },
+    {
+      h:"The Clarification Practice",
+      blocks:[
+        {t:"warmth",c:"Covey's inside-out formulation arrives at the same ground from a different direction: begin with the end in mind — but the end is not an achievement. The end is a way of being. A way of moving through the world. The clarification of values is not an intellectual exercise. It is a felt inquiry: what, when it is present in the way a life is lived, produces a sense of genuine alignment? What, when it is absent, produces the quiet dread that something important has been betrayed?"},
+        {t:"command",c:"<strong>A practice worth the time it takes:</strong> write out the five or six qualities of character that genuinely matter — not the ones that sound good, but the ones that produce the specific feeling of integrity when they are present. Then examine the last month. Where were these values operationalised? Where were they set aside? The gap between stated values and lived values is not a judgment. It is a map. <strong>The most honest map available. And honest maps are the most useful kind.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:11, part:4,
+  title:"The System",
+  sub:"Making Change Structural Rather Than Motivational",
+  hook:"Motivation is a weather pattern — it moves through, it shifts, it cannot be depended upon for the things that require consistency. The structures that make good choices the path of least resistance are considerably more reliable than the intention to choose well.",
+  core:"James Clear's architecture of behaviour change rests on a counter-intuitive insight: outcomes are produced by systems, not goals. The person who redesigns their environment for the behaviours they want to produce will consistently outperform the person who relies on willpower and intention.",
+  xrefs:[10,12,13,17],
+  refs:["James Clear — Atomic Habits","BJ Fogg — Tiny Habits","Charles Duhigg — The Power of Habit","Acceptance and Commitment Therapy — Steven Hayes","Stephen Covey — The 7 Habits of Highly Effective People"],
+  secs:[
+    {
+      h:"Identity and the 1% Principle",
+      blocks:[
+        {t:"p",c:"James Clear's central insight is that the deepest level of behaviour change is identity change. Goals ask: what do I want to achieve? Systems ask: who do I want to become? And the person who is becoming a writer writes. The person who is trying to develop a writing habit negotiates with themselves every morning. <strong>The identity frame does not bypass the difficulty. It changes the direction from which the behaviour comes — from effortful compliance to natural expression.</strong>"},
+        {t:"p",c:"BJ Fogg's Tiny Habits research confirms the mechanism: the most reliable path to new behaviour is not motivation but design. Anchor the new behaviour to an existing one. Reduce the required action until it cannot be not-done. Celebrate immediately after. The nervous system learns through completion and reward, not through aspiration and judgment."},
+        {t:"pull",c:'"You do not rise to the level of your goals. You fall to the level of your systems."',attr:"James Clear — Atomic Habits"}
+      ]
+    },
+    {
+      h:"Designing the Environment",
+      blocks:[
+        {t:"warmth",c:"Duhigg's habit loop — cue, routine, reward — offers the practical architecture. Every habitual behaviour is attached to a cue. Redesigning the environment means redesigning the cues. The person who puts the running shoes beside the bed is not relying on motivation. They are making the cue unavoidable. The person who removes the phone from the bedroom is not relying on willpower. They are removing the trigger. <strong>Environment design is not a shortcut. It is the intelligent application of how the brain actually works.</strong>"},
+        {t:"command",c:"<strong>The redesign practice:</strong> identify one behaviour that genuinely matters and is currently inconsistent. Then apply three questions: What cue reliably precedes this behaviour when it does happen? Can that cue be made more automatic, more immediate, more impossible to miss? What is the smallest version of this behaviour that constitutes doing it? <strong>The aim is to make the first step so small and so frictionless that the only barrier remaining is the barrier the self constructs — and that barrier, faced with something genuinely tiny, tends to step aside.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:12, part:4,
+  title:"The Regulation",
+  sub:"Presence as the Foundation of Everything",
+  hook:"The capacity to think clearly, respond wisely, maintain connection, and access creativity — all of it rests on a foundation that is rarely discussed in frameworks for effectiveness: the regulated state of the nervous system.",
+  core:"Somatic regulation is not self-care as indulgence. It is the non-negotiable prerequisite for everything else on this list. A dysregulated nervous system cannot access the prefrontal cortex with the consistency required for the life being built.",
+  xrefs:[5,10,11,16],
+  refs:["Bessel van der Kolk — The Body Keeps the Score","Stephen Porges — The Polyvagal Theory","Dan Siegel — The Mindful Brain","Peter Levine — Waking the Tiger","Jon Kabat-Zinn — Full Catastrophe Living"],
+  secs:[
+    {
+      h:"The Prerequisite",
+      blocks:[
+        {t:"p",c:"Porges' Polyvagal Theory maps the hierarchy clearly: the nervous system moves through states. In the ventral vagal state — regulated, safe, socially engaged — the prefrontal cortex is online. Creative thinking, nuanced decision-making, genuine connection, emotional flexibility. These are all functions of the regulated state. In sympathetic activation — fight/flight — the system narrows. In dorsal shutdown — the freeze and collapse response — the system closes further still."},
+        {t:"p",c:"The implication for effectiveness is profound: the most sophisticated strategy, the most carefully considered plan, the clearest values — all of it is only accessible from within the regulated window. The person running on chronic sympathetic activation is not thinking. They are executing emergency protocols with the sophistication of a limbic system, in contexts that require the sophistication of a prefrontal cortex."},
+        {t:"pull",c:'"You can\'t think yourself out of a problem you behaved yourself into."',attr:"attributed to Dan Siegel"}
+      ]
+    },
+    {
+      h:"The Practice of Return",
+      blocks:[
+        {t:"warmth",c:"Kabat-Zinn's foundational insight: mindfulness is not a state to be achieved. It is a practice of return. The attention wanders — to past, to future, to threat, to narrative. The practice is the returning, not the staying. Each return is a neural rep. Each intentional return to present experience is, literally, a moment of building the capacity to choose where attention goes. Over time, the window of tolerance expands. The nervous system learns that it can feel what is present without being consumed by it."},
+        {t:"command",c:"<strong>The simplest regulation practice that actually works:</strong> before any high-stakes interaction, any important decision, any creative work — three slow exhalations, longer than the inhalation, orienting attention to physical sensation in the present moment. This is not meditation. It is neurological preparation. The extended exhalation activates the parasympathetic response. The orientation to the present moment anchors the attention out of narrative. <strong>Thirty seconds. It changes the state that everything else runs on.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:13, part:4,
+  title:"The Language",
+  sub:"How the Internal Conversation Shapes the Possible",
+  hook:"The conversation happening continuously inside — the running commentary on events, on the self, on what is possible — is not a neutral observer. It is an active participant in generating the reality it describes.",
+  core:"The internal language structures perception, primes emotional state, and shapes the range of response available in any given moment. Updating that language is not self-deception. It is the precision installation of a more accurate operating framework.",
+  xrefs:[4,10,12,17],
+  refs:["Steven Hayes — A Liberated Mind","Martin Seligman — Learned Optimism","Daniel Siegel — Mindsight","Albert Ellis — Reason and Emotion in Psychotherapy","Tony Robbins — Awaken the Giant Within"],
+  secs:[
+    {
+      h:"The Shaping Function",
+      blocks:[
+        {t:"p",c:"Martin Seligman's decades of research into explanatory style produced a finding that is difficult to overstate: the way events are narrated — specifically whether they are framed as permanent or temporary, pervasive or specific, personal or situational — predicts resilience, health, and capacity for action more reliably than almost any other measurable factor. The person who narrates a setback as evidence of a permanent personal flaw and the person who narrates it as a specific and temporary difficulty are experiencing the same event. They are not having the same experience."},
+        {t:"p",c:"Ellis' rational-emotive behaviour therapy arrives at the mechanism: the emotional response to any event is mediated by the interpretation of that event. The <em>A</em> (activating event) does not directly produce <em>C</em> (consequence). It produces <em>C</em> through <em>B</em> — the belief system through which it is processed. Changing the belief changes the emotional output and the behavioural option set."},
+        {t:"pull",c:'"Between stimulus and response there is a space. In that space is our power to choose our response."',attr:"Viktor Frankl — Man\'s Search for Meaning"}
+      ]
+    },
+    {
+      h:"Language as Practice",
+      blocks:[
+        {t:"warmth",c:"ACT's defusion practice offers a precise linguistic shift: adding <em>I notice I'm having the thought that...</em> before a limiting belief creates an observer relationship with the content. The thought is no longer experienced as reality. It is experienced as a mental event — one that can be noticed, acknowledged, and not necessarily acted upon. The difference in practice is significant. The difference in life, accumulated over time, is enormous."},
+        {t:"command",c:"<strong>The language upgrade practice:</strong> identify three recurring statements in the internal dialogue — the ones that arrive most consistently in moments of difficulty or self-assessment. For each one, ask: is this narrating fact, or is this narrating interpretation through an old lens? Then experiment, not with replacing it with something unrealistically positive, but with replacing it with something more precise. <strong>The aim is accuracy, not positivity. Accurate language generates accurate response. And accurate response is the foundation of genuine effectiveness.</strong>"}
+      ]
+    }
+  ]
+},
+
+/* ── PART FIVE: THE OPEN HORIZON ── */
+{
+  id:14, part:5,
+  title:"The Meaning",
+  sub:"Finding Purpose in the Rebuilding",
+  hook:"Meaning is not a reward for suffering through. It is something that becomes available inside the difficulty, when the question is approached directly rather than deferred until conditions improve.",
+  core:"Viktor Frankl's logotherapy rests on the observation that the search for meaning is the primary motivational force in human beings — deeper than pleasure, deeper than power. And meaning, uniquely, is not circumstance-dependent. It is available in any condition, to anyone willing to engage the question honestly.",
+  xrefs:[7,9,13,18],
+  refs:["Viktor Frankl — Man's Search for Meaning","Viktor Frankl — The Will to Meaning","Joseph Campbell — The Power of Myth","Irvin Yalom — Existential Psychotherapy","Mihaly Csikszentmihalyi — Flow"],
+  secs:[
+    {
+      h:"The Question That Remains",
+      blocks:[
+        {t:"p",c:"Frankl's observation from inside the concentration camps holds its force precisely because of where it was made: meaning cannot be taken from a person. It can only be given away. The prisoner who maintained interior freedom — who chose the quality of their response to conditions they could not control — was demonstrating something fundamental about the structure of human consciousness. The space between stimulus and response is inviolable. What lives in that space is the last and most essential freedom."},
+        {t:"p",c:"Campbell's formulation of this is characteristically poetic: follow your bliss — but this is not a statement about comfort or pleasure. It is a statement about aliveness. The activites, relationships, and engagements that produce a sense of being fully present, fully utilised, fully at home in one's own skin — these are the compass directions. The question <em>what makes me feel most alive</em> is not a luxury question. It is the most practical question available."},
+        {t:"pull",c:'"Life is never made unbearable by circumstances, but only by lack of meaning and purpose."',attr:"Viktor Frankl — Man\'s Search for Meaning"}
+      ]
+    },
+    {
+      h:"Flow and the Inhabited Life",
+      blocks:[
+        {t:"warmth",c:"Csikszentmihalyi's research into optimal experience — the state of complete absorption that he called flow — confirms the phenomenology: the moments people retrospectively identify as among the best of their lives are almost never the moments of passive comfort. They are the moments of full engagement. Challenge matched to capacity. Attention absorbed. The self temporarily dissolved into the activity. These moments are not accidents. They are the signature of a life structured around genuine engagement."},
+        {t:"command",c:"<strong>The meaning inquiry:</strong> what activities, relationships, or forms of contribution produce the specific sense of being fully used — where time moves differently, where the usual self-consciousness goes quiet, where something arrives that feels true? These are not preferences to be scheduled occasionally. <strong>These are the load-bearing elements of a life worth living — the non-negotiables around which everything else should, where possible, be organised.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:15, part:5,
+  title:"The Integration",
+  sub:"Carrying All of It Forward",
+  hook:"The shadow and the light, the wounded parts and the capable ones, the inherited story and the chosen one — these do not separate into neat compartments. The integrated life carries all of it, consciously, as a complete human being.",
+  core:"Jung's individuation is not the elimination of the dark, the wounded, or the difficult. It is the integration of all of it into a coherent whole — a self that is large enough to contain complexity without being destabilised by it.",
+  xrefs:[2,9,14,16],
+  refs:["Carl Jung — Modern Man in Search of a Soul","Carl Jung — The Integration of the Personality","Richard Rohr — Falling Upward","Brené Brown — The Gifts of Imperfection","Robert A. Johnson — Owning Your Own Shadow"],
+  secs:[
+    {
+      h:"The Wholeness That Includes Everything",
+      blocks:[
+        {t:"p",c:"There is a version of personal development that is organised around the elimination of difficult parts — getting rid of anxiety, defeating the inner critic, overcoming fear. This version, however well-intentioned, is working against the grain of how psychological health actually develops. Jung's lifelong project of individuation was not the construction of a problem-free self. It was the development of a self spacious enough to contain all of its own contents without needing to suppress any of them."},
+        {t:"p",c:"Robert A. Johnson, writing on owning the shadow, is precise: the energy bound up in the suppressed, unacknowledged parts of the self does not disappear. It is available — it is simply not accessible in its natural form. Integration makes that energy available. The anger that has been carefully managed becomes the capacity for fierce boundary-setting. The grief that has been held at bay becomes the capacity for profound empathy. <strong>The shadow, integrated, is not a liability. It is a resource.</strong>"},
+        {t:"pull",c:'"One does not become enlightened by imagining figures of light, but by making the darkness conscious."',attr:"Carl Jung"}
+      ]
+    },
+    {
+      h:"Rohr's Second Half",
+      blocks:[
+        {t:"warmth",c:"Rohr's observation about the second half of life captures the quality of integrated consciousness: the person who has made the descent and returned is less defended, less reactive, less dependent on the approval of others, and less catastrophised by difficulty. Not because they have solved those problems. Because they have learned that those states — defensiveness, reactivity, the need for approval — are not the self. They are weather. They pass."},
+        {t:"command",c:"<strong>The integration practice:</strong> the next time a part of the self that is usually judged or suppressed activates — the part that wants to withdraw, that feels envious, that fears exposure — instead of overriding it, ask what it needs. Not to act from it unchecked, but to meet it with the quality of presence that allows it to complete rather than to fester. <strong>A part that feels seen and acknowledged rarely needs to shout. It is the unseen parts that run things from below.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:16, part:5,
+  title:"The Mastery",
+  sub:"What Ongoing Becoming Actually Looks Like",
+  hook:"Mastery in any domain does not look like the elimination of difficulty. It looks like an expanded capacity to be present with difficulty — to work with what is, rather than waiting for conditions that never quite arrive.",
+  core:"The pursuit of a finished, arrived, resolved self is the source of more quiet suffering than almost any other operating assumption. The alternative is not resignation. It is the recognition that genuine aliveness is characterised by ongoing becoming — and that this is the gift, not the problem.",
+  xrefs:[10,14,15,17],
+  refs:["Carol Dweck — Mindset","George Leonard — Mastery","Joseph Campbell — The Power of Myth","James Clear — Atomic Habits","Mihaly Csikszentmihalyi — Flow"],
+  secs:[
+    {
+      h:"The Myth of Arrival",
+      blocks:[
+        {t:"p",c:"Carol Dweck's research into growth and fixed mindsets establishes the mechanism: the belief that capacity is fixed tends to produce avoidance of challenges where failure is possible. The belief that capacity is developed through effort tends to produce engagement with exactly those challenges. The difference is not motivational. It is structural. It determines what range of experience is available, over a lifetime."},
+        {t:"p",c:"George Leonard's <em>Mastery</em> maps the actual shape of the learning curve — not the cinematic version that rises consistently upward, but the real one: plateaus, apparent regression, occasional breakthrough, return to plateau. Most people abandon the plateau. The master, Leonard argues, learns to love the plateau — learns to find the practice itself inherently satisfying, independent of measurable progress. That relationship with the plateau is what distinguishes the practitioner from the hobbyist."},
+        {t:"pull",c:'"A master is simply someone who has made mistakes more deliberately than everyone else."',attr:"after George Leonard — Mastery"}
+      ]
+    },
+    {
+      h:"The Open Edge",
+      blocks:[
+        {t:"warmth",c:"Campbell's final formulation is generous in its simplicity: the privilege of a lifetime is being who you are. Not performing who you are. Not apologising for who you are. Not indefinitely deferring who you are until conditions become more favourable. Being it. Now. With the full weight of everything that has been understood along the way. The hero does not return from the journey as a finished monument. The hero returns changed — and the change is itself the opening of the next call."},
+        {t:"command",c:"<strong>The single practice that underlies all the others:</strong> show up, consistently, to the work that genuinely matters — in the mood that is present, with the resources available, in the conditions as they actually are. Not the work that is most comfortable, or most legible to others, or most consistent with an image. The actual work. The one that only this particular life, with this particular history, in this particular body, can do. <strong>That work is always available. The question is only whether to take the seat.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:17, part:5,
+  title:"The Reflection",
+  sub:"Experience Converted Into Intelligence",
+  hook:"Experience accumulates whether or not it is examined. The examination is what determines whether experience becomes wisdom — or simply becomes more of the same, in slightly different clothing.",
+  core:"Regular, deliberate reflection converts raw experience into transferable intelligence. Without it, the same patterns recur with the same conviction that this time the circumstances are different. With it, the past becomes a navigational asset rather than simply a weight.",
+  xrefs:[6,11,16,18],
+  refs:["Stephen Covey — The 7 Habits of Highly Effective People","Viktor Frankl — Man's Search for Meaning","David Kolb — Experiential Learning","Donald Schön — The Reflective Practitioner","Carl Jung — Memories, Dreams, Reflections"],
+  secs:[
+    {
+      h:"Examined Experience",
+      blocks:[
+        {t:"p",c:"David Kolb's experiential learning cycle establishes what most people sense but rarely systematise: raw experience produces learning only when it passes through reflection, then conceptualisation, then active experimentation. The cycle that stops at experience produces fluency without growth — the same response applied with increasing speed to situations that may no longer warrant it. The cycle that continues through reflection produces the genuine, transferable intelligence that makes the next iteration different from the last."},
+        {t:"p",c:"Donald Schön named the professional version of this <em>reflection in action</em> and <em>reflection on action</em> — the capacity to think while doing, and the discipline to think afterward about what the doing revealed. The practitioner who reflects becomes progressively more effective. The practitioner who does not becomes very efficient at executing the same pattern, indefinitely."},
+        {t:"pull",c:'"The unexamined life is not worth living."',attr:"Socrates — as reported by Plato"}
+      ]
+    },
+    {
+      h:"The Weekly Practice",
+      blocks:[
+        {t:"warmth",c:"Covey's seventh habit — sharpen the saw — is the maintenance version of this. The instrument that processes experience needs regular attention. Without deliberate renewal, it processes more experience with progressively less discernment. The person who never reflects becomes very good at moving fast. The person who reflects becomes genuinely wiser — and the compounding over time is the most significant investment available."},
+        {t:"command",c:"<strong>Three questions. Ten minutes. Honest answers. Weekly:</strong> What worked? What didn't? What one thing, done more consistently, would make the most meaningful difference next week? Monthly, add: where is the gap between the person intended and the person evidenced by this month's choices? What has been told to oneself that is probably not accurate? <strong>Written answers. Not in the head. The act of writing forces specificity, and specificity is what transforms intention into intelligence.</strong>"}
+      ]
+    }
+  ]
+},
+
+{
+  id:18, part:5,
+  title:"The Return",
+  sub:"The Hero Comes Home",
+  hook:"The journey was never only about the traveller. The one who makes the descent, finds the grace, and returns changed — carries something back that was not available before the going. The return is the beginning of the offering.",
+  core:"Campbell's hero does not complete the journey by arriving somewhere final. The journey completes in the return — the integration of the gift into the ordinary world, the living of what was learned, the passing on of what was found in the dark. This is the ongoing transaction of a fully inhabited human life.",
+  xrefs:[7,9,15,17],
+  refs:["Joseph Campbell — The Hero With a Thousand Faces","Viktor Frankl — Man's Search for Meaning","Carl Jung — Modern Man in Search of a Soul","Richard Rohr — Falling Upward","Brené Brown — Daring Greatly"],
+  secs:[
+    {
+      h:"The Gift of the Return",
+      blocks:[
+        {t:"p",c:"Campbell is precise about this: the hero's journey has a third act that is as essential as the departure and the descent. The return. The gift brought back. The knowledge, the medicine, the elixir — whatever was found in the belly of the whale — it was not found only for the hero's benefit. It was found to be brought back and offered. The one who has genuinely made the descent carries a quality of understanding that has no other source. It cannot be acquired secondhand. It was earned in the dark."},
+        {t:"p",c:"Frankl's formulation of meaning through contribution converges with this: the deepest sense of purpose available to human beings is not the achievement of personal goals but the sense of genuine usefulness — of one's particular life, with its particular wounds and gifts, being of service to something beyond itself. Not through self-erasure. Through self-expression, fully inhabited."},
+        {t:"pull",c:'"The hero\'s journey is always a journey of self-discovery, but it culminates in a gift — something brought back for the tribe."',attr:"Joseph Campbell — The Power of Myth"}
+      ]
+    },
+    {
+      h:"The Seat",
+      blocks:[
+        {t:"warmth",c:"Everything worked through in these chapters constitutes real work — sitting with questions that resist easy answers, looking at evidence that was more comfortable when unnamed, meeting parts of the self that had been waiting, patiently, for someone to come looking. None of it is finished. The chapters connect because the work connects. There is no clean sequence. It is simultaneous, iterative, ongoing. It is, precisely, the work of being alive and paying attention."},
+        {t:"command",c:"Campbell's final image is the right place to arrive: Siddhartha, under the Bodhi tree, reaching down and touching the earth. Not fighting what arose. Not fleeing it. Simply claiming the right to be present — fully, honestly, in the body, in the moment, in the life. <strong>The seat is yours. It always was. The journey was only ever the long way home to the thing that was true from the beginning.</strong> Begin again, from here."}
+      ]
+    }
+  ]
+}
+
+]; // end CH
+
+/* ════════════════════════════════════════════════
+   LOCALSTORAGE — READ TRACKING
+════════════════════════════════════════════════ */
+const STORAGE_KEY = 'tht_read_chapters';
+
+function getReadChapters(){
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch(e){ return []; }
+}
+
+function markChapterRead(id){
+  try {
+    const read = getReadChapters();
+    if(!read.includes(id)){
+      read.push(id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(read));
+    }
+  } catch(e){}
+}
+
+/* ════════════════════════════════════════════════
+   BUILD HOME — TILES
+════════════════════════════════════════════════ */
+function buildHome(){
+  const wrap = document.getElementById('tiles-wrap');
+  wrap.innerHTML = '';
+  const readChapters = getReadChapters();
+
+  PARTS.forEach(part => {
+    const partChs = CH.filter(c => c.part === part.id);
+
+    const row = document.createElement('div');
+    row.className = 'part-row';
+
+    const labelRow = document.createElement('div');
+    labelRow.className = 'part-label-row';
+
+    const labelCell = document.createElement('div');
+    labelCell.className = 'part-label-cell';
+    labelCell.innerHTML = `
+      <div class="part-number">Part ${part.id} — ${part.arc}</div>
+      <div class="part-name">${part.name}</div>
+      <div class="part-meta">${part.note}</div>
+    `;
+
+    const tileGrid = document.createElement('div');
+    tileGrid.className = 'part-tiles';
+
+    partChs.forEach((ch, i) => {
+      const t = document.createElement('div');
+      const isRead = readChapters.includes(ch.id);
+      t.className = 'tile' + (isRead ? ' read-tile' : '');
+      t.style.animationDelay = (i * 0.05) + 's';
+      t.setAttribute('tabIndex', '0');
+      t.setAttribute('role', 'button');
+      t.setAttribute('aria-label', `Chapter ${ch.id}: ${ch.title}. ${ch.sub}`);
+      t.innerHTML = `
+        <div class="tile-ch">Ch. ${ch.id} — Part ${ch.part}</div>
+        <div class="tile-title">${ch.title}</div>
+        <div class="tile-sub">${ch.sub}</div>
+        <div class="tile-hook">${ch.hook}</div>
+        <div class="tile-go">→</div>
+      `;
+      t.addEventListener('click', () => openCh(ch.id));
+      t.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          openCh(ch.id);
+        }
+      });
+      tileGrid.appendChild(t);
+    });
+
+    labelRow.appendChild(labelCell);
+    labelRow.appendChild(tileGrid);
+    row.appendChild(labelRow);
+    wrap.appendChild(row);
+  });
+}
+
+/* ════════════════════════════════════════════════
+   RENDER BLOCK
+════════════════════════════════════════════════ */
+function block(b){
+  if(b.t==='p') return `<p>${b.c}</p>`;
+  if(b.t==='pull') return `<div class="pull"><p>${b.c}</p>${b.attr?`<p class="pull-attr">— ${b.attr}</p>`:''}</div>`;
+  if(b.t==='warmth') return `<div class="warmth"><p>${b.c}</p></div>`;
+  if(b.t==='command') return `<div class="command"><p>${b.c}</p></div>`;
+  return '';
+}
+
+/* ════════════════════════════════════════════════
+   OPEN CHAPTER
+════════════════════════════════════════════════ */
+function openCh(id){
+  const ch = CH.find(c=>c.id===id);
+  if(!ch) return;
+
+  markChapterRead(id);
+
+  const partObj = PARTS[ch.part-1];
+  const body = ch.secs.map(s=>`<h3>${s.h}</h3>${s.blocks.map(block).join('')}`).join('');
+
+  const xrefs = ch.xrefs.map(xid=>{
+    const xc = CH.find(c=>c.id===xid);
+    if(!xc) return '';
+    return `<div class="xref-card" onclick="openCh(${xc.id})" tabindex="0" role="button" aria-label="Go to Chapter ${xc.id}: ${xc.title}"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCh(${xc.id})}">
+      <div class="xn">Chapter ${xc.id}</div>
+      <div class="xt">${xc.title}</div>
+      <div class="xs">${xc.sub}</div>
+    </div>`;
+  }).join('');
+
+  const sources = ch.refs.map(r=>`<span class="source-pill">${r}</span>`).join('');
+
+  document.getElementById('chapter-content').innerHTML = `
+    <div class="ch-banner">
+      <div class="ch-inner">
+        <div class="ch-breadcrumb">${partObj.name} — ${partObj.arc} &nbsp;/&nbsp; Chapter ${ch.id} of 18</div>
+        <div class="ch-part-tag">Part ${ch.part} — ${partObj.arc}</div>
+        <div class="ch-title">${ch.title}</div>
+        <div class="ch-subtitle">${ch.sub}</div>
+        <div class="ch-principle">
+          <div class="ch-principle-label">Core Principle</div>
+          <p>${ch.core}</p>
+        </div>
+      </div>
+    </div>
+    <div class="ch-body">
+      ${body}
+      <div class="xref-wrap">
+        <h3>Continue Reading</h3>
+        <div class="xref-grid">${xrefs}</div>
+      </div>
+      <div class="sources-wrap">
+        <h3>Voices in This Chapter</h3>
+        <div class="sources-list">${sources}</div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('home-view').classList.remove('active');
+  document.getElementById('chapter-view').classList.add('active');
+  document.getElementById('nb').classList.add('on');
+  window.scrollTo({top:0,behavior:'instant'});
+
+  // Push onto internal nav stack
+  navStack.push(id);
+
+  // Rebuild tiles to reflect new read state
+  buildHome();
+}
+
+function goHome(){
+  document.getElementById('chapter-view').classList.remove('active');
+  document.getElementById('home-view').classList.add('active');
+  document.getElementById('nb').classList.remove('on');
+  window.scrollTo({top:0,behavior:'instant'});
+  navStack.length = 0;
+  updateProgressBar(0);
+}
+
+/* ════════════════════════════════════════════════
+   IN-MEMORY NAVIGATION STACK
+   (replaces History API — incompatible with iframe)
+════════════════════════════════════════════════ */
+const navStack = [];
+
+// Wire nav logo
+document.getElementById('nav-logo').addEventListener('click', goHome);
+
+// Back button in nav triggers goBack when inside a chapter
+document.getElementById('nb').addEventListener('click', (e) => {
+  e.stopPropagation(); // prevent the onclick="goHome()" double-fire
+});
+
+// Override the nav-back button to use goBack instead
+document.getElementById('nb').onclick = null;
+document.getElementById('nb').addEventListener('click', goBack);
+
+function goBack(){
+  navStack.pop(); // remove current chapter
+  if(navStack.length > 0){
+    const prevId = navStack.pop(); // will be re-pushed by openCh
+    openCh(prevId);
+  } else {
+    goHome();
+  }
+}
+
+/* ════════════════════════════════════════════════
+   SCROLL PROGRESS BAR
+════════════════════════════════════════════════ */
+function updateProgressBar(pct){
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+window.addEventListener('scroll', () => {
+  const chapterView = document.getElementById('chapter-view');
+  if(!chapterView.classList.contains('active')){
+    updateProgressBar(0);
+    return;
+  }
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if(docHeight <= 0){ updateProgressBar(100); return; }
+  const pct = Math.min(100, (scrollTop / docHeight) * 100);
+  updateProgressBar(pct);
+}, {passive: true});
+
+buildHome();
+</script>
+</body>
+</html>
